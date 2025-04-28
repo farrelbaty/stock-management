@@ -1,0 +1,65 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  stockMovements StockMovement[]
+}
+model Product {
+  id              Int           @id @default(autoincrement())
+  name            String
+  type            ProductType   
+  description     String?
+  referenceCode   String         @unique
+  quantityInStock Int            @default(0)    
+  minQuantity     Int            @default(0) 
+  expiryDate      DateTime?      
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  stockMovements  StockMovement[]
+}
+
+model StockMovement {
+  id            Int            @id @default(autoincrement())
+  productId     Int
+  type          MovementType  
+  quantity      Int
+  reason        String?        
+  doneById      Int?
+  doneBy        User?           @relation(fields: [doneById], references: [id])
+  createdAt     DateTime        @default(now())
+
+  product       Product         @relation(fields: [productId], references: [id])
+}
+
+
+
+enum ProductType {
+  MEDICAMENT
+  MATERIEL
+  CONSOMMABLE
+  AUTRE
+}
+
+enum MovementType {
+  ENTREE
+  SORTIE
+}
+
+
