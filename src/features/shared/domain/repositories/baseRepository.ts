@@ -4,5 +4,5 @@ export interface BaseRepository<T> {
   getById(id: string): Promise<T | null>;
   create(data: any): Promise<T>;
   update(id: string, data: any): Promise<T>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<T>;
 }

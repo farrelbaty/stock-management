@@ -25,8 +25,8 @@ export abstract class PrismaBaseRepository<T> implements BaseRepository<T> {
     return this.toDomain(raw);
   }
 
-  async delete(id: string): Promise<void> {
-    await this.model.delete({ where: { id } });
+  async delete(id: string): Promise<T> {
+    return await this.model.delete({ where: { id } });
   }
 
   async findOneByField(field: string, value: any): Promise<T | null> {

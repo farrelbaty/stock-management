@@ -24,50 +24,9 @@ export class PrismaProductRepository
     };
   }
 
-  async addProduct(product: Product): Promise<Product> {
+  async totalSpecificProduct(productId: string): Promise<number> {
     try {
-      return await this.model.create({ data: product });
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async updateProduct(
-    productId: string,
-    product: Omit<Product, "id">
-  ): Promise<Product> {
-    try {
-      const updatedProduct = await this.model.update({
-        where: { id: productId },
-        data: product,
-      });
-      return this.toDomain(updatedProduct);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async deleteProduct(productId: string) {
-    try {
-      await this.model.delete(productId);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getAllProducts(): Promise<Product[]> {
-    try {
-      const products = await this.model.getAll();
-      return products.map(this.toDomain);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getSpecificProduct(productId: string): Promise<Product> {
-    try {
-      const product = await this.model.getById(productId);
-      return this.toDomain(product);
+      return await this.model.count({ where: { id: productId } });
     } catch (error) {
       throw error;
     }
