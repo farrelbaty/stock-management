@@ -1,54 +1,82 @@
-// schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mysql" 
   url      = env("DATABASE_URL")
 }
 
 
-model User {
-  id        Int        @id @default(autoincrement())
-  name      String
-  email     String     @unique
-  password  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
 
-  stockMovements StockMovement[]
-}
 model Product {
-  id              Int           @id @default(autoincrement())
+  id              String             @id @default(cuid())
   name            String
-  type            ProductType   
+  type            ProductType
   description     String?
-  referenceCode   String         @unique
-  quantityInStock Int            @default(0)    
-  minQuantity     Int            @default(0) 
-  expiryDate      DateTime?      
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  referenceCode   String           @unique
+  quantityInStock Int              @default(0)
+  minQuantity     Int              @default(0)
+  expiryDate      DateTime?
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   stockMovements  StockMovement[]
+  purchaseItems   PurchaseItem[]
 }
 
 model StockMovement {
-  id            Int            @id @default(autoincrement())
-  productId     Int
-  type          MovementType  
+  id            String            @id @default(cuid())
+  productId     String
+  type          MovementType
   quantity      Int
-  reason        String?        
-  doneById      Int?
-  doneBy        User?           @relation(fields: [doneById], references: [id])
+  reason        String?
+  doneById      String?
+
   createdAt     DateTime        @default(now())
 
   product       Product         @relation(fields: [productId], references: [id])
+  doneBy        User?           @relation(fields: [doneById], references: [id])
 }
 
+model PurchaseOrder {
+  id             String             @id @default(cuid())
+  supplier       String          
+  orderDate      DateTime         @default(now())
+  deliveryDate   DateTime?
+  status         OrderStatus      @default(PENDING)
+  totalAmount    Int?
 
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  purchaseItems  PurchaseItem[]
+}
+
+model PurchaseItem {
+  id              String             @id @default(cuid())
+  purchaseOrderId String
+  productId       String
+  quantityOrdered Int
+  quantityReceived Int?            
+  unitPrice       Int?
+
+  purchaseOrder   PurchaseOrder    @relation(fields: [purchaseOrderId], references: [id])
+  product         Product          @relation(fields: [productId], references: [id])
+}
+
+model User {
+  id             String             @id @default(cuid())
+  name           String
+  email          String          @unique
+  password       String
+  role           UserRole        @default(GESTIONNAIRE)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  stockMovements StockMovement[]
+}
 
 enum ProductType {
   MEDICAMENT
@@ -62,4 +90,15 @@ enum MovementType {
   SORTIE
 }
 
+enum OrderStatus {
+  PENDING
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
+}
 
+enum UserRole {
+  ADMIN
+  GESTIONNAIRE
+  UTILISATEUR
+}
