@@ -6,7 +6,7 @@ export class Product {
     public referenceCode: string,
     public quantityInStock: number,
     public minQuantity: number,
-    public expiryDate: Date,
-    public description?: string
+    public expiryDate: Date | null,
+    public description: string | null
   ) {}
 }

@@ -40,9 +40,23 @@ model StockMovement {
   doneBy        User?           @relation(fields: [doneById], references: [id])
 }
 
+model Supplier {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  address     String?
+  phoneNumber String?
+  email       String?
+  
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+}
+
+
 model PurchaseOrder {
   id             String             @id @default(cuid())
-  supplier       String          
+  supplierId     String          
   orderDate      DateTime         @default(now())
   deliveryDate   DateTime?
   status         OrderStatus      @default(PENDING)
@@ -51,6 +65,8 @@ model PurchaseOrder {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
+
+  supplier       Supplier         @relation(fields: [supplierId], references: [id])
   purchaseItems  PurchaseItem[]
 }
 

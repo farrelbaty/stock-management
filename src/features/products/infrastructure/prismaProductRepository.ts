@@ -1,5 +1,5 @@
 import { PrismaBaseRepository } from "@/features/shared/infrastructure/repositories/PrismaBaseRepository";
-import db from "@/lib/db";
+import { db } from "@/lib/db";
 import { Product } from "../domain/entity/Product";
 import { IProductRepository } from "../domain/repository/IProductRepository";
 
@@ -27,6 +27,23 @@ export class PrismaProductRepository
   async totalSpecificProduct(productId: string): Promise<number> {
     try {
       return await this.model.count({ where: { id: productId } });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateProductQuantity(productId: string, quantityAdded: number) {
+    try {
+      const updated = await db.product.update({
+        where: { id: productId },
+        data: {
+          quantityInStock: {
+            increment: quantityAdded,
+          },
+        },
+      });
+
+      return this.toDomain(updated);
     } catch (error) {
       throw error;
     }
