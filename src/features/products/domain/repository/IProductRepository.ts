@@ -7,4 +7,5 @@ export interface IProductRepository extends BaseRepository<Product> {
     productId: string,
     quantityAdded: number
   ): Promise<Product>;
+  addProduct(product: Omit<Product, "id">): Promise<Product>;
 }

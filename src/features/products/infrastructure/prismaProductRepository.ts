@@ -17,7 +17,7 @@ export class PrismaProductRepository
       name: raw.name,
       type: raw.type,
       referenceCode: raw.referenceCode,
-      quantityInStock: raw.quantityInStock,
+      quantityInStock: raw.quantityInStock ?? 0,
       minQuantity: raw.minQuantity,
       expiryDate: raw.expiryDate,
       description: raw.description,
@@ -44,6 +44,39 @@ export class PrismaProductRepository
       });
 
       return this.toDomain(updated);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addProduct(product: Omit<Product, "id">): Promise<Product> {
+    const {
+      name,
+      type,
+      referenceCode,
+      minQuantity,
+      quantityInStock,
+      expiryDate,
+      description,
+    } = product;
+    // const existingProduct = await db.product.findUnique({
+    //   where:{referenceCode }
+    // })
+
+    try {
+      const newProduct = await db.product.create({
+        data: {
+          name,
+          type,
+          referenceCode,
+          minQuantity,
+          quantityInStock: quantityInStock ? quantityInStock : 0,
+          expiryDate: expiryDate ? expiryDate : null,
+          description: description ? description : null,
+        },
+      });
+
+      return this.toDomain(newProduct);
     } catch (error) {
       throw error;
     }

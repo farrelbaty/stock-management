@@ -1,10 +1,10 @@
-import { Product } from "../domain/entity/Product";
+import { ProductDTO } from "../domain/DTO/productDTO";
 import { IProductRepository } from "../domain/repository/IProductRepository";
 
 export class UpdateProductUseCase {
   constructor(private productRepo: IProductRepository) {}
 
-  async execute(productId: string, product: Omit<Product, "id">) {
+  async execute(productId: string, product: Partial<ProductDTO>) {
     if (!productId) throw new Error("L'identifiant du produit est requis");
     const existingProduct = await this.productRepo.getById(productId);
     if (!existingProduct)

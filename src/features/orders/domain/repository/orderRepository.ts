@@ -7,4 +7,14 @@ export interface IOrderRepository extends BaseRepository<Order> {
     supplierId: string,
     items: { productId: string; quantityOrdered: number }[]
   ): Promise<Order>;
+
+  updateOrder(
+    orderId: string,
+    items: { productId: string; quantityOrdered: number }[]
+  ): Promise<Order>;
+
+  deleteOrder(orderId: string): Promise<void>;
+
+  getSpecificOrder(orderId: string): Promise<Order>;
+  getAllOrders(): Promise<Order[]>;
 }
