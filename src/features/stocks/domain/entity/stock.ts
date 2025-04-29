@@ -1,4 +1,4 @@
-import { MovementType } from "@/utils/types";
+import { MovementType } from "@/lib/utils";
 
 export class StockMovement {
   constructor(
@@ -6,7 +6,7 @@ export class StockMovement {
     public productId: string,
     public type: MovementType,
     public quantity: number,
-    public reason?: string,
-    public doneById?: string
+    public reason: string | null,
+    public doneById: string | null
   ) {}
 }

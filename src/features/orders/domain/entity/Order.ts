@@ -1,12 +1,12 @@
-import { OrderStatus } from "@/utils/types";
+import { OrderStatus } from "@/lib/utils";
 
 export class Order {
   constructor(
     public id: string,
-    public supplier: string,
+    public supplierId: string,
     public orderDate: Date,
     public status: OrderStatus,
-    public deliveryDate?: Date,
-    public totalAmount?: number
+    public deliveryDate: Date | null,
+    public totalAmount: number | null
   ) {}
 }

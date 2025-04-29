@@ -3,4 +3,8 @@ import { Product } from "../entity/Product";
 
 export interface IProductRepository extends BaseRepository<Product> {
   totalSpecificProduct(productId: string): Promise<number>;
+  updateProductQuantity(
+    productId: string,
+    quantityAdded: number
+  ): Promise<Product>;
 }
