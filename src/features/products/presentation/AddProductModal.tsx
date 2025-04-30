@@ -109,7 +109,7 @@ const AddProductModal = () => {
       <ModalComponent
         open={open}
         onOpenChange={setOpen}
-        title="Ajouter une commande"
+        title="Ajouter un produit"
       >
         <GenericForm
           fields={commandFields}

@@ -26,6 +26,12 @@ model Product {
   purchaseItems   PurchaseItem[]
 }
 
+model Service{
+  id String @id @default(cuid())
+  name String @unique
+  personnel User[]
+}
+
 model StockMovement {
   id            String            @id @default(cuid())
   productId     String
@@ -87,12 +93,14 @@ model User {
   name           String
   email          String          @unique
   password       String
-  roleId         String        
+  roleId         String   
+  serviceId String?     
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
   stockMovements StockMovement[]
   role Role @relation(fields:[roleId], references: [id])
+  service Service? @relation(fields:[serviceId], references:[id])
 }
 
 model Role{

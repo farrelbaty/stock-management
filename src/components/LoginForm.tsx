@@ -1,14 +1,39 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // handle login
+
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erreur lors de la connexion");
+      }
+
+      const data = await response.json();
+      setEmail("");
+      setPassword("");
+      router.replace("/centre-diagnostic");
+      return data;
+    } catch (error) {
+      console.error("Erreur de connexion :", error);
+    }
   };
 
   return (

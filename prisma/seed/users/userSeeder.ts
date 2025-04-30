@@ -1,4 +1,4 @@
-import { CreateUserUseCase } from "@/features/users/application/createUserUseCase";
+import { CreateUserUseCase } from "@/features/users/application/loginUserUseCase";
 import { PrismaUserRepository } from "@/features/users/infrastructure/PrismaUserRepository";
 import { db } from "@/lib/db";
 

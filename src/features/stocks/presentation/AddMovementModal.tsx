@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -5,6 +6,7 @@ import { Label } from "@radix-ui/react-label";
 import { useQuery } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type Product = {
   id: string;
@@ -17,9 +19,15 @@ type Service = {
 };
 
 type LigneDestockage = {
+  id: string; // ID unique local
   produitId: string | null;
   quantite: number;
 };
+
+// Fonction utilitaire pour générer un ID unique
+function generateId() {
+  return Math.random().toString(36).substring(2, 9);
+}
 
 async function getAllProducts(): Promise<Product[]> {
   const res = await fetch("/api/products");
@@ -30,12 +38,12 @@ async function getAllProducts(): Promise<Product[]> {
 async function getAllServices(): Promise<Service[]> {
   const res = await fetch("/api/services");
   if (!res.ok) throw new Error("Erreur lors de la récupération des services");
-  return res.json();
+  return await res.json();
 }
 
 export default function DestockProducts() {
   const [lignes, setLignes] = useState<LigneDestockage[]>([
-    { produitId: null, quantite: 1 },
+    { id: generateId(), produitId: null, quantite: 1 },
   ]);
   const [serviceId, setServiceId] = useState<string>("");
 
@@ -50,24 +58,27 @@ export default function DestockProducts() {
   });
 
   const handleChange = (
-    index: number,
+    ligneId: string,
     field: "produitId" | "quantite",
     value: any
   ) => {
-    const newLignes = [...lignes];
-    newLignes[index] = {
-      ...newLignes[index],
-      [field]: field === "quantite" ? parseInt(value, 10) : value,
-    };
+    const newLignes = lignes.map((ligne) =>
+      ligne.id === ligneId
+        ? {
+            ...ligne,
+            [field]: field === "quantite" ? parseInt(value, 10) : value,
+          }
+        : ligne
+    );
     setLignes(newLignes);
   };
 
   const ajouterLigne = () => {
-    setLignes([...lignes, { produitId: null, quantite: 1 }]);
+    setLignes([...lignes, { id: generateId(), produitId: null, quantite: 1 }]);
   };
 
-  const supprimerLigne = (index: number) => {
-    setLignes(lignes.filter((_, i) => i !== index));
+  const supprimerLigne = (ligneId: string) => {
+    setLignes(lignes.filter((ligne) => ligne.id !== ligneId));
   };
 
   const handleSend = async () => {
@@ -84,18 +95,17 @@ export default function DestockProducts() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           serviceId,
-          produits: lignesValides,
+          produits: lignesValides.map(({ id, ...rest }) => rest),
         }),
       });
 
       if (!res.ok) throw new Error("Erreur lors du déstockage");
 
-      alert("Déstockage effectué avec succès !");
-      setLignes([{ produitId: null, quantite: 1 }]);
+      toast("Déstockage effectué avec succès !");
+      setLignes([{ id: generateId(), produitId: null, quantite: 1 }]);
       setServiceId("");
     } catch (err) {
-      console.error(err);
-      alert("Erreur lors de l'envoi.");
+      toast("Erreur lors de l'envoi.");
     }
   };
 
@@ -105,8 +115,8 @@ export default function DestockProducts() {
         Déstockage de produits
       </h2>
 
-      <div className="flex flex-col">
-        <Label className="mb-1">Service de destination</Label>
+      <div className="flex flex-col gap-4">
+        <Label className="mb-1 font-semibold">Service de destination</Label>
         <select
           className="border p-2 rounded"
           value={serviceId}
@@ -121,17 +131,19 @@ export default function DestockProducts() {
         </select>
       </div>
 
-      {lignes.map((ligne, index) => (
+      {lignes.map((ligne) => (
         <div
-          key={index}
+          key={ligne.id}
           className="flex items-end gap-4 bg-white p-4 rounded-md shadow-sm"
         >
-          <div className="flex flex-col w-full">
-            <Label className="mb-1">Produit</Label>
+          <div className="flex flex-col w-full gap-4">
+            <Label className="mb-1 font-semibold">Produit</Label>
             <select
               className="border p-2 rounded w-full"
               value={ligne.produitId ?? ""}
-              onChange={(e) => handleChange(index, "produitId", e.target.value)}
+              onChange={(e) =>
+                handleChange(ligne.id, "produitId", e.target.value)
+              }
             >
               <option value="">-- Sélectionner un produit --</option>
               {produits?.map((p) => (
@@ -149,12 +161,14 @@ export default function DestockProducts() {
               min={1}
               className="border p-2 rounded w-full"
               value={ligne.quantite}
-              onChange={(e) => handleChange(index, "quantite", e.target.value)}
+              onChange={(e) =>
+                handleChange(ligne.id, "quantite", e.target.value)
+              }
             />
           </div>
 
           <button
-            onClick={() => supprimerLigne(index)}
+            onClick={() => supprimerLigne(ligne.id)}
             className="text-red-500 hover:text-red-700 cursor-pointer"
             title="Supprimer"
           >
