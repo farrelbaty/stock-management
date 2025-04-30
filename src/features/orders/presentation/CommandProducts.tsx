@@ -1,30 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { Product } from "@/features/products/domain/entity/Product";
 import { Label } from "@radix-ui/react-label";
+import { useQuery } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react"; // icône de poubelle (facultatif)
 import { useState } from "react";
 
-type Produit = {
-  id: number;
-  nom: string;
-};
-
 type LigneCommande = {
-  produitId: number | null;
-  quantite: number;
+  produitId: string | null;
+  quantityOrdered: number;
 };
 
-const produitsDispo: Produit[] = [
-  { id: 1, nom: "Gants stériles" },
-  { id: 2, nom: "Seringues 5ml" },
-  { id: 3, nom: "Masques chirurgicaux" },
-  { id: 4, nom: "Désinfectant" },
-];
+async function getAllProducts() {
+  try {
+    const response = await fetch("/api/products");
+    if (!response.ok) throw new Error("Erreur serveur");
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
 
 export default function CommandProducts() {
   const [lignes, setLignes] = useState<LigneCommande[]>([
-    { produitId: null, quantite: 1 },
+    { produitId: null, quantityOrdered: 1 },
   ]);
 
   const handleChange = (
@@ -35,13 +36,13 @@ export default function CommandProducts() {
     const newLignes = [...lignes];
     newLignes[index] = {
       ...newLignes[index],
-      [field]: field === "quantite" ? parseInt(value, 10) : parseInt(value),
+      [field]: field === "quantite" ? parseInt(value, 10) : value,
     };
     setLignes(newLignes);
   };
 
   const ajouterLigne = () => {
-    setLignes([...lignes, { produitId: null, quantite: 1 }]);
+    setLignes([...lignes, { produitId: null, quantityOrdered: 1 }]);
   };
 
   const supprimerLigne = (index: number) => {
@@ -49,18 +50,23 @@ export default function CommandProducts() {
     setLignes(newLignes);
   };
 
+  const { data } = useQuery<Product[]>({
+    queryKey: ["products"],
+    queryFn: getAllProducts,
+  });
+
   const produitsSelectionnes = lignes
     .filter((l) => l.produitId !== null)
     .map((l) => ({
-      produit: produitsDispo.find((p) => p.id === l.produitId)?.nom,
-      quantite: l.quantite,
+      produit: data?.find((p) => p.id === l.produitId)?.name,
+      quantite: l.quantityOrdered,
     }));
 
   const sendCommand = async () => {
     try {
       const commande = lignes.filter((l) => l.produitId !== null);
 
-      const res = await fetch("/api/commande", {
+      const res = await fetch("/api/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +79,7 @@ export default function CommandProducts() {
       const data = await res.json();
       alert("Commande envoyée avec succès !");
       console.log(data);
-      setLignes([{ produitId: null, quantite: 1 }]);
+      setLignes([{ produitId: null, quantityOrdered: 1 }]);
     } catch (err) {
       console.error(err);
       alert("Échec de l'envoi de la commande.");
@@ -97,9 +103,9 @@ export default function CommandProducts() {
               onChange={(e) => handleChange(index, "produitId", e.target.value)}
             >
               <option value="">-- Sélectionner un produit --</option>
-              {produitsDispo.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nom}
+              {data?.map((p) => (
+                <option key={p.id} value={p.id as string}>
+                  {p.name}
                 </option>
               ))}
             </select>
@@ -111,7 +117,7 @@ export default function CommandProducts() {
               type="number"
               min={1}
               className="border p-2 rounded w-full"
-              value={ligne.quantite}
+              value={ligne.quantityOrdered}
               onChange={(e) => handleChange(index, "quantite", e.target.value)}
             />
           </div>

@@ -4,8 +4,10 @@
 import GenericForm from "@/components/shared/GenericForm";
 import ModalComponent from "@/components/shared/ModalComponent";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type CommandFieldsType = {
   name: string;
@@ -64,8 +66,36 @@ const commandFields: CommandFieldsType[] = [
 const AddProductModal = () => {
   const [open, setOpen] = useState(false);
 
+  const addProduct = async (data: Record<string, any>) => {
+    const response = await fetch("/api/products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error("Échec de l'ajout du produit");
+    }
+
+    return response.json();
+  };
+
+  const mutation = useMutation({
+    mutationFn: addProduct,
+    onSuccess: () => {
+      toast("Produit ajouté avec succès !");
+      setOpen(false);
+    },
+    onError: (error) => {
+      toast("Erreur lors de l'ajout du produit");
+      console.error(error);
+    },
+  });
+
   const handleSubmit = (formData: Record<string, any>) => {
-    console.log("Nouveau fournisseur soumis :", formData);
+    mutation.mutate(formData);
   };
 
   return (

@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { ProductDTO } from "../domain/DTO/productDTO";
 import { Product } from "../domain/entity/Product";
 import { IProductRepository } from "../domain/repository/IProductRepository";
 
@@ -41,7 +42,7 @@ export class PrismaProductRepository implements IProductRepository {
     }
   }
 
-  async addProduct(product: Omit<Product, "id">): Promise<Product> {
+  async addProduct(product: ProductDTO): Promise<Product> {
     const {
       name,
       type,
@@ -67,7 +68,7 @@ export class PrismaProductRepository implements IProductRepository {
           referenceCode,
           minQuantity,
           quantityInStock: quantityInStock ? quantityInStock : 0,
-          expiryDate: expiryDate ? expiryDate : null,
+          expiryDate: expiryDate ? new Date(expiryDate) : null,
           description: description ? description : null,
         },
       });
@@ -81,6 +82,25 @@ export class PrismaProductRepository implements IProductRepository {
   async getProduct(productId: string) {
     try {
       const product = await db.product.findUnique({ where: { id: productId } });
+      return product ? this.toDomain(product) : null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllProducts() {
+    try {
+      const products = await db.product.findMany();
+      return products.map(this.toDomain);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProductByName(name: string): Promise<Product | null> {
+    try {
+      const product = await db.product.findFirst({ where: { name } });
+
       return product ? this.toDomain(product) : null;
     } catch (error) {
       throw error;

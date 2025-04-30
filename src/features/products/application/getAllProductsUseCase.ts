@@ -4,6 +4,6 @@ export class GetAllProductsUseCase {
   constructor(private productRepo: IProductRepository) {}
 
   async execute() {
-    return await this.productRepo.getAll();
+    return await this.productRepo.getAllProducts();
   }
 }

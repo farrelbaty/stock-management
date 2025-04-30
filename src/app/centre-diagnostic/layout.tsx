@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 import {
   Boxes,
   LayoutDashboard,
@@ -90,6 +91,7 @@ export default function DashboardDGMMLayout({
       <main className="flex-1 px-6 py-10 h-screen overflow-auto">
         {children}
       </main>
+      <Toaster />
     </div>
   );
 }

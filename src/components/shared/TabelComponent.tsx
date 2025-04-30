@@ -87,7 +87,10 @@ export function TableComponent<TData, TValue>({
                   const filterOptions = (column.columnDef as any).filterOptions;
 
                   return (
-                    <TableHead key={header.id} className="space-y-1">
+                    <TableHead
+                      key={header.id}
+                      className="space-y-1 bg-black text-white font-bold"
+                    >
                       <div
                         onClick={column.getToggleSortingHandler()}
                         className="cursor-pointer select-none"

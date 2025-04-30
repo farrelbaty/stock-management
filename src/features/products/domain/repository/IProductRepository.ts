@@ -8,4 +8,6 @@ export interface IProductRepository {
   ): Promise<Product>;
   addProduct(product: Omit<Product, "id">): Promise<Product>;
   getProduct(productId: string): Promise<Product | null>;
+  getAllProducts(): Promise<Product[]>;
+  getProductByName(name: string): Promise<Product | null>;
 }

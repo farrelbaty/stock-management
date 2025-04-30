@@ -1,11 +1,18 @@
+import { createOrderUseCase } from "@/lib/usecases/ordersUseCases";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
   try {
     const body = await req.json();
 
-    const orderRepo = new Prisma();
+    const newOrder = await createOrderUseCase.save(body);
+
+    return NextResponse.json(newOrder, { status: 500 });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { message: error instanceof Error ? error.message : "Erreur inconnue" },
+      { status: 500 }
+    );
   }
 };

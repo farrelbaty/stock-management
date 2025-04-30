@@ -1,6 +1,5 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,11 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useForm } from "react-hook-form";
 
 // import { useRouter } from "next/navigation";
 
 export default function NewStockMovement() {
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const { register, setValue } = useForm();
   // const router = useRouter();
 
   return (
@@ -29,7 +29,6 @@ export default function NewStockMovement() {
           <SelectValue placeholder="Sélectionner un produit" />
         </SelectTrigger>
         <SelectContent>
-          {/* TODO: Mapper tous les produits ici */}
           <SelectItem value="product1">Paracétamol 500mg</SelectItem>
           <SelectItem value="product2">Gants stériles</SelectItem>
         </SelectContent>

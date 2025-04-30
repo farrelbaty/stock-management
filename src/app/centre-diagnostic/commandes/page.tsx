@@ -1,16 +1,8 @@
 import { TableComponent } from "@/components/shared/TabelComponent";
 import { Order } from "@/features/orders/domain/entity/Order";
-import { ColumnDef } from "@tanstack/react-table";
+import { commandeColumns } from "@/features/orders/presentation/commandeColumns";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-
-const columns: ColumnDef<Order>[] = [
-  { accessorKey: "reference", header: "Reférence" },
-  { accessorKey: "supplier", header: "Fournisseur" },
-  { accessorKey: "orderDate", header: "Date d'émission" },
-  { accessorKey: "status", header: "Statut" },
-  { accessorKey: "deliveryDate", header: "Date de réception" },
-];
 
 const OrdersPage = () => {
   const commandes: Order[] = [];
@@ -26,7 +18,7 @@ const OrdersPage = () => {
           <Plus size={20} /> Nouvelle commande
         </Link>
       </div>
-      <TableComponent columns={columns} data={commandes} />
+      <TableComponent columns={commandeColumns} data={commandes} />
     </div>
   );
 };

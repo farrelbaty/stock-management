@@ -2,6 +2,7 @@ import { IProductRepository } from "@/features/products/domain/repository/IProdu
 import { IStockRepository } from "@/features/stocks/domain/repository/stockRepository";
 import { db } from "@/lib/db";
 import { OrderStatus } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Order } from "../domain/entity/Order";
 import { IOrderRepository } from "../domain/repository/orderRepository";
 
@@ -51,6 +52,9 @@ export class PrismaOrderRepository implements IOrderRepository {
 
       return this.toDomain(order);
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
       throw error;
     }
   }
