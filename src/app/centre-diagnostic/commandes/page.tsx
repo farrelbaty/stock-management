@@ -12,64 +12,8 @@ const columns: ColumnDef<Order>[] = [
   { accessorKey: "deliveryDate", header: "Date de réception" },
 ];
 
-const commandFields = [
-  {
-    name: "reference",
-    label: "Référence",
-    type: "text",
-    required: true,
-  },
-  {
-    name: "supplierId",
-    label: "Fournisseur",
-    type: "select",
-    required: true,
-    options: [
-      { label: "Fournisseur 1", value: "Fournisseur1" },
-      { label: "Fournisseur 2", value: "Fournisseur2" },
-    ],
-  },
-  {
-    name: "orderDate",
-    label: "Date de commande",
-    type: "date",
-    required: true,
-  },
-  {
-    name: "deliveryDate",
-    label: "Date de livraison",
-    type: "date",
-    required: false,
-  },
-  {
-    name: "status",
-    label: "Statut",
-    type: "select",
-    required: true,
-    options: [
-      { label: "En attente", value: "EN ATTENTE" },
-      { label: "Reçue", value: "RECUE" },
-    ],
-  },
-];
-
 const OrdersPage = () => {
-  const commandes: Order[] = [
-    {
-      id: "1",
-      supplierId: "Fournisseur1",
-      orderDate: new Date("2025-26-04"),
-      status: "EN ATTENTE",
-      deliveryDate: new Date("01-05-2025"),
-    },
-    {
-      id: "2",
-      supplierId: "Fournisseur2",
-      orderDate: new Date("2025-04-26"),
-      status: "RECUE",
-      deliveryDate: new Date("2025-01-05"),
-    },
-  ];
+  const commandes: Order[] = [];
 
   return (
     <div>

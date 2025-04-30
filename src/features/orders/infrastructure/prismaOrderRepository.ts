@@ -125,6 +125,12 @@ export class PrismaOrderRepository implements IOrderRepository {
           deliveryDate: new Date(),
         },
       });
+
+      const updatedOrder = await db.purchaseOrder.findUniqueOrThrow({
+        where: { id: orderId },
+      });
+
+      return this.toDomain(updatedOrder);
     } catch (error) {
       throw error;
     }

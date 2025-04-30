@@ -16,4 +16,13 @@ export interface IOrderRepository {
 
   getSpecificOrder(orderId: string): Promise<Order | null>;
   getAllOrders(): Promise<Order[]>;
+  receivePurchaseOrder(
+    orderId: string,
+    itemsReceived: {
+      productId: string;
+      quantityReceived: number;
+      unitPrice?: number;
+    }[],
+    doneById: string
+  ): Promise<Order>;
 }

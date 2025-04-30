@@ -1,7 +1,7 @@
 import { Order } from "../domain/entity/Order";
 import { IOrderRepository } from "../domain/repository/orderRepository";
 
-export class CreateOrder {
+export class CreateOrderUseCase {
   constructor(private orderRepo: IOrderRepository) {}
 
   async save(order: Omit<Order, "id">) {
