@@ -11,7 +11,7 @@ datasource db {
 
 model Product {
   id              String             @id @default(cuid())
-  name            String
+  name            String             @unique
   type            ProductType
   description     String?
   referenceCode   String           @unique
@@ -87,11 +87,18 @@ model User {
   name           String
   email          String          @unique
   password       String
-  role           UserRole        @default(GESTIONNAIRE)
+  roleId         String        
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
   stockMovements StockMovement[]
+  role Role @relation(fields:[roleId], references: [id])
+}
+
+model Role{
+  id String @id @default(cuid())
+  name String
+  users User[]
 }
 
 enum ProductType {
@@ -113,8 +120,4 @@ enum OrderStatus {
   CANCELLED
 }
 
-enum UserRole {
-  ADMIN
-  GESTIONNAIRE
-  UTILISATEUR
-}
+

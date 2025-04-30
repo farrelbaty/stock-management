@@ -81,4 +81,13 @@ export class PrismaProductRepository
       throw error;
     }
   }
+
+  async getProduct(productId: string) {
+    try {
+      const product = await db.product.findUnique({ where: { id: productId } });
+      return product ? this.toDomain(product) : null;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

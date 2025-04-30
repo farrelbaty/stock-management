@@ -1,7 +1,6 @@
-import { BaseRepository } from "@/features/shared/domain/repositories/baseRepository";
 import { Order } from "../entity/Order";
 
-export interface IOrderRepository extends BaseRepository<Order> {
+export interface IOrderRepository {
   totalOrder(): Promise<number>;
   createPurchaseOrder(
     supplierId: string,
@@ -15,6 +14,6 @@ export interface IOrderRepository extends BaseRepository<Order> {
 
   deleteOrder(orderId: string): Promise<void>;
 
-  getSpecificOrder(orderId: string): Promise<Order>;
+  getSpecificOrder(orderId: string): Promise<Order | null>;
   getAllOrders(): Promise<Order[]>;
 }

@@ -8,4 +8,5 @@ export interface IProductRepository extends BaseRepository<Product> {
     quantityAdded: number
   ): Promise<Product>;
   addProduct(product: Omit<Product, "id">): Promise<Product>;
+  getProduct(productId: string): Promise<Product | null>;
 }

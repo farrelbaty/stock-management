@@ -1,4 +1,5 @@
 import { TableComponent } from "@/components/TabelComponent";
+import AddProductModal from "@/features/products/presentation/AddProductModal";
 import { ProductType } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
@@ -80,6 +81,7 @@ const ProductPage = () => {
         </Link>
       </div>
       <TableComponent columns={columns} data={produits} />
+      <AddProductModal />
     </div>
   );
 };

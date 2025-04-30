@@ -1,21 +1,15 @@
 import { IProductRepository } from "@/features/products/domain/repository/IProductRepository";
-import { PrismaBaseRepository } from "@/features/shared/infrastructure/repositories/PrismaBaseRepository";
 import { IStockRepository } from "@/features/stocks/domain/repository/stockRepository";
 import { db } from "@/lib/db";
 import { OrderStatus } from "@prisma/client";
 import { Order } from "../domain/entity/Order";
 import { IOrderRepository } from "../domain/repository/orderRepository";
 
-export class PrismaOrderRepository
-  extends PrismaBaseRepository<Order>
-  implements IOrderRepository
-{
+export class PrismaOrderRepository implements IOrderRepository {
   constructor(
     private stockRepo: IStockRepository,
     private productRepo: IProductRepository
-  ) {
-    super(db.purchaseOrder);
-  }
+  ) {}
 
   public toDomain(raw: Order): Order {
     return {
@@ -30,7 +24,7 @@ export class PrismaOrderRepository
 
   async totalOrder(): Promise<number> {
     try {
-      return await this.model.count();
+      return await db.purchaseOrder.count();
     } catch (error) {
       throw error;
     }
@@ -99,6 +93,7 @@ export class PrismaOrderRepository
           await this.stockRepo.createStockMovement(
             item.productId,
             item.quantityReceived,
+            "ENTREE",
             doneById,
             "Réception commande"
           );
@@ -200,16 +195,18 @@ export class PrismaOrderRepository
 
   async deleteOrder(orderId: string) {
     try {
-      await this.model.delete(orderId);
+      await db.purchaseOrder.delete({ where: { id: orderId } });
     } catch (error) {
       throw error;
     }
   }
 
-  async getSpecificOrder(orderId: string): Promise<Order> {
+  async getSpecificOrder(orderId: string): Promise<Order | null> {
     try {
-      const order = await this.model.getById(orderId);
-      return this.toDomain(order);
+      const order = await db.purchaseOrder.findUnique({
+        where: { id: orderId },
+      });
+      return order ? this.toDomain(order) : null;
     } catch (error) {
       throw error;
     }
@@ -217,7 +214,7 @@ export class PrismaOrderRepository
 
   async getAllOrders(): Promise<Order[]> {
     try {
-      const orders = await this.model.getAll();
+      const orders = await db.purchaseOrder.findMany();
       return orders.map(this.toDomain);
     } catch (error) {
       throw error;

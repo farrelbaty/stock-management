@@ -1,14 +1,15 @@
-import Dashboard from "@/components/Dashbord";
+import { Features } from "@/components/Features";
+import { Hero } from "@/components/Hero";
+import { LoginForm } from "@/components/LoginForm";
 
 export default function Home() {
   return (
-    <>
-      <div className="mb-20">
-        <h2 className="text-center text-2xl font-bold">Tableau de bord</h2>
-      </div>
-      <div>
-        <Dashboard />
-      </div>
-    </>
+    <main className="min-h-screen bg-white text-gray-900 p-6">
+      <Hero />
+      <section className="py-12 flex justify-center gap-5">
+        <Features />
+        <LoginForm />
+      </section>
+    </main>
   );
 }
