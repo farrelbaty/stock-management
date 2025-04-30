@@ -1,57 +1,45 @@
-"use client";
+import { TableComponent } from "@/components/shared/TabelComponent";
+import { getStocksUseCase } from "@/lib/usecases/stockUseCases";
 
-import { baseColumns } from "@/features/stocks/presentation/columns";
-import { StockMovementsTable } from "@/features/stocks/presentation/StockMovementsTable";
-import { useQuery } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
 
-// export type StockMovementForDisplay = {
-//   productName: string;
-//   type: "ENTREE" | "SORTIE";
-//   quantity: number;
-//   reason?: string;
-//   createdAt: string;
-// };
-
-// const mockData: StockMovementForDisplay[] = [
-//   {
-//     productName: "Paracétamol",
-//     type: "ENTREE",
-//     quantity: 100,
-//     reason: "Réapprovisionnement",
-//     createdAt: "2025-04-01T12:00:00Z",
-//   },
-//   {
-//     productName: "Gants médicaux",
-//     type: "SORTIE",
-//     quantity: 20,
-//     reason: "Utilisation urgente",
-//     createdAt: "2025-04-02T15:30:00Z",
-//   },
-//   // ajoute plus d'entrées ici
-// ];
-
-const fetchStocks = async () => {
-  const response = await fetch("/api/stocks");
-  if (!response.ok) throw new Error("Erreur serveur");
-
-  const data = await response.json();
-  return data;
+type StockMovement = {
+  productName: string;
+  type: "ENTREE" | "SORTIE";
+  quantity: number;
+  reason?: string;
+  createdAt: string;
 };
 
-const StockMovementsPage = () => {
-  const { data: stocks, isLoading } = useQuery({
-    queryKey: ["StockMovements"],
-    queryFn: fetchStocks,
-  });
+const baseColumns: ColumnDef<StockMovement>[] = [
+  {
+    accessorKey: "productName",
+    header: "Produit",
+  },
+  {
+    accessorKey: "type",
+    header: "Type",
+  },
+  {
+    accessorKey: "quantity",
+    header: "Quantité",
+  },
+  {
+    accessorKey: "reason",
+    header: "Raison",
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Date",
+  },
+];
 
-  if (isLoading) return <div>Chargement...</div>;
+const StockMovementsPage = async () => {
+  const stocks = await getStocksUseCase.getStocks();
+  console.log(stocks);
   return (
     <div>
-      <StockMovementsTable
-        columns={baseColumns}
-        data={stocks}
-        searchKey="productName"
-      />
+      <TableComponent data={stocks} columns={baseColumns} />
     </div>
   );
 };

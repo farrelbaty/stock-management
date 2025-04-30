@@ -1,18 +1,10 @@
-import { PrismaBaseRepository } from "@/features/shared/infrastructure/repositories/PrismaBaseRepository";
 import { db } from "@/lib/db";
 import { MovementType } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { StockMovement } from "../domain/entity/stock";
 import { IStockRepository } from "../domain/repository/stockRepository";
 
-export class PrismaStockRepository
-  extends PrismaBaseRepository<StockMovement>
-  implements IStockRepository
-{
-  constructor() {
-    super(db.stockMovement);
-  }
-
+export class PrismaStockRepository implements IStockRepository {
   public toDomain(raw: StockMovement): StockMovement {
     return {
       id: raw.id,

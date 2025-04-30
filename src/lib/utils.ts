@@ -16,3 +16,18 @@ export type OrderStatus =
   | "CANCELLED";
 
 export type UserRole = "ADMIN" | "GESTIONNAIRE" | "UTILISATEUR";
+
+export function generateReferenceCode(): string {
+  const prefix = "CDL";
+  const year = new Date().getFullYear();
+  const characters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let randomPart = "";
+
+  for (let i = 0; i < 8; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomPart += characters[randomIndex];
+  }
+
+  return `${prefix}-${year}-${randomPart}`;
+}

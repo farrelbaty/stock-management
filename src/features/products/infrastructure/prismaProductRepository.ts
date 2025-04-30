@@ -1,16 +1,8 @@
-import { PrismaBaseRepository } from "@/features/shared/infrastructure/repositories/PrismaBaseRepository";
 import { db } from "@/lib/db";
 import { Product } from "../domain/entity/Product";
 import { IProductRepository } from "../domain/repository/IProductRepository";
 
-export class PrismaProductRepository
-  extends PrismaBaseRepository<Product>
-  implements IProductRepository
-{
-  constructor() {
-    super(db.product);
-  }
-
+export class PrismaProductRepository implements IProductRepository {
   public toDomain(raw: Product): Product {
     return {
       id: raw.id,
@@ -26,7 +18,7 @@ export class PrismaProductRepository
 
   async totalSpecificProduct(productId: string): Promise<number> {
     try {
-      return await this.model.count({ where: { id: productId } });
+      return await db.product.count({ where: { id: productId } });
     } catch (error) {
       throw error;
     }
@@ -59,11 +51,15 @@ export class PrismaProductRepository
       expiryDate,
       description,
     } = product;
-    // const existingProduct = await db.product.findUnique({
-    //   where:{referenceCode }
-    // })
 
     try {
+      const existingProduct = await db.product.findFirst({
+        where: { name },
+      });
+
+      if (existingProduct)
+        throw new Error("Ce produit est déjà enregistré dans nos données");
+
       const newProduct = await db.product.create({
         data: {
           name,

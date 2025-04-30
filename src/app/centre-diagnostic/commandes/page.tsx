@@ -1,4 +1,4 @@
-import { TableComponent } from "@/components/TabelComponent";
+import { TableComponent } from "@/components/shared/TabelComponent";
 import { Order } from "@/features/orders/domain/entity/Order";
 import { ColumnDef } from "@tanstack/react-table";
 import { Plus } from "lucide-react";

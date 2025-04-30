@@ -1,9 +1,7 @@
-import { TableComponent } from "@/components/TabelComponent";
+import { TableComponent } from "@/components/shared/TabelComponent";
 import AddProductModal from "@/features/products/presentation/AddProductModal";
 import { ProductType } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 
 export type CustomColumnDef<TData, TValue = unknown> = ColumnDef<
   TData,
@@ -18,6 +16,7 @@ type TypeProduct = {
   type: ProductType;
   quantityInStock: number;
   minQuantity: number;
+  expiryDate: Date | "N/A";
 };
 const produits: TypeProduct[] = [
   {
@@ -26,6 +25,7 @@ const produits: TypeProduct[] = [
     type: "CONSOMMABLE",
     quantityInStock: 30,
     minQuantity: 20,
+    expiryDate: "N/A",
   },
 
   {
@@ -34,6 +34,7 @@ const produits: TypeProduct[] = [
     type: "MATERIEL",
     quantityInStock: 80,
     minQuantity: 50,
+    expiryDate: "N/A",
   },
   {
     referenceCode: "CDL-2025-001",
@@ -41,13 +42,14 @@ const produits: TypeProduct[] = [
     type: "MATERIEL",
     quantityInStock: 10,
     minQuantity: 50,
+    expiryDate: "N/A",
   },
 ];
 
 const columns: CustomColumnDef<TypeProduct>[] = [
   {
     accessorKey: "referenceCode",
-    header: "Reférence",
+    header: "Code de reférence",
   },
   {
     accessorKey: "name",
@@ -57,7 +59,7 @@ const columns: CustomColumnDef<TypeProduct>[] = [
   {
     accessorKey: "type",
     header: "Type de produit",
-    filterOptions: ["CONSOMMABLE", "MATERIEL"],
+    // filterOptions: ["CONSOMMABLE", "MATERIEL"],
   },
   {
     accessorKey: "quantityInStock",
@@ -65,7 +67,11 @@ const columns: CustomColumnDef<TypeProduct>[] = [
   },
   {
     accessorKey: "minQuantity",
-    header: "Quantité minimale",
+    header: "Seuil d'alerte",
+  },
+  {
+    accessorKey: "expiryDate",
+    header: "Date de péremption",
   },
 ];
 const ProductPage = () => {
@@ -73,15 +79,9 @@ const ProductPage = () => {
     <div>
       <div className="flex justify-between mb-20">
         <h1 className="text-2xl font-bold">Produits</h1>
-        <Link
-          href="/fournisseurs/newsupplier"
-          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded cursor-pointer font-bold"
-        >
-          <Plus size={20} /> Nouveau produit
-        </Link>
+        <AddProductModal />
       </div>
       <TableComponent columns={columns} data={produits} />
-      <AddProductModal />
     </div>
   );
 };

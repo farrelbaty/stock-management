@@ -16,6 +16,16 @@ export default function Dashboard() {
           icon={<Boxes className="w-8 h-8 text-red-500" />}
         />
         <KpiCard
+          title="Produits en périmés"
+          value="2"
+          icon={<Boxes className="w-8 h-8 text-red-800" />}
+        />
+        <KpiCard
+          title="Produits en proches de la péremption"
+          value="8"
+          icon={<Boxes className="w-8 h-8 text-red-500" />}
+        />
+        <KpiCard
           title="Commandes en attente"
           value="3"
           icon={<PackageCheck className="w-8 h-8 text-yellow-500" />}
@@ -34,6 +44,7 @@ export default function Dashboard() {
               <th className="py-2 px-4 text-left ">Produit</th>
               <th className="py-2 px-4 text-left ">Stock actuel</th>
               <th className="py-2 px-4 text-left ">Stock minimum</th>
+              <th className="py-2 px-4 text-left ">Date de péremption</th>
             </tr>
           </thead>
           <tbody>
@@ -41,11 +52,19 @@ export default function Dashboard() {
               <td className="py-2 px-4 ">Gants latex</td>
               <td className="py-2 px-4 ">5</td>
               <td className="py-2 px-4 ">20</td>
+              <td className="py-2 px-4 ">N/A</td>
             </tr>
             <tr>
               <td className="py-2 px-4 ">Masques chirurgicaux</td>
               <td className="py-2 px-4 ">12</td>
               <td className="py-2 px-4 ">30</td>
+              <td className="py-2 px-4 ">N/A</td>
+            </tr>
+            <tr>
+              <td className="py-2 px-4 ">Paracétamol</td>
+              <td className="py-2 px-4 ">70</td>
+              <td className="py-2 px-4 ">30</td>
+              <td className="py-2 px-4 ">30/04/2025</td>
             </tr>
           </tbody>
         </table>

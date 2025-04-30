@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 export const GET = async () => {
   try {
     const moves = await getStocksUseCase.getStocks();
+    console.log(moves);
 
     return NextResponse.json(moves, { status: 200 });
   } catch (error) {

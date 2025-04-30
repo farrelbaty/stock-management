@@ -1,7 +1,6 @@
-import { BaseRepository } from "@/features/shared/domain/repositories/baseRepository";
 import { Product } from "../entity/Product";
 
-export interface IProductRepository extends BaseRepository<Product> {
+export interface IProductRepository {
   totalSpecificProduct(productId: string): Promise<number>;
   updateProductQuantity(
     productId: string,

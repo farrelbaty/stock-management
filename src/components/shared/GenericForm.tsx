@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 type Field = {
   name: string;
   label: string;
-  typeChamps: "text" | "number" | "textarea" | "select";
+  typeChamps: "text" | "number" | "textarea" | "select" | "date";
   options?: { value: string; label: string }[];
   required?: boolean;
 };

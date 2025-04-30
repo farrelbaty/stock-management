@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
+import GenericForm from "@/components/shared/GenericForm";
+import ModalComponent from "@/components/shared/ModalComponent";
 import { Button } from "@/components/ui/button";
-import ModalComponent from "@/components/ModalComponent";
-import GenericForm from "@/components/GenericForm";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 const fournisseurFields = [
   { name: "name", label: "Nom", type: "text", required: true },

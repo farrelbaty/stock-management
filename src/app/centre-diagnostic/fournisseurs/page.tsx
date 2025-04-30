@@ -1,4 +1,4 @@
-import { TableComponent } from "@/components/TabelComponent";
+import { TableComponent } from "@/components/shared/TabelComponent";
 import { AddSupplierClient } from "@/features/suppliers/presentation/AddSupplierModal";
 import { ColumnDef } from "@tanstack/react-table";
 
