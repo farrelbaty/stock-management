@@ -56,6 +56,30 @@ export default function CommandProducts() {
       quantite: l.quantite,
     }));
 
+  const sendCommand = async () => {
+    try {
+      const commande = lignes.filter((l) => l.produitId !== null);
+
+      const res = await fetch("/api/commande", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ lignes: commande }),
+      });
+
+      if (!res.ok) throw new Error("Erreur lors de l'envoi de la commande");
+
+      const data = await res.json();
+      alert("Commande envoyée avec succès !");
+      console.log(data);
+      setLignes([{ produitId: null, quantite: 1 }]);
+    } catch (err) {
+      console.error(err);
+      alert("Échec de l'envoi de la commande.");
+    }
+  };
+
   return (
     <div className="p-6 space-y-6 bg-gray-50 rounded-lg shadow-lg max-w-3xl mx-auto">
       <h2 className="text-2xl font-semibold text-center">Nouvelle commande</h2>
@@ -109,7 +133,10 @@ export default function CommandProducts() {
         >
           + Ajouter un produit
         </button>
-        <button className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold">
+        <button
+          className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold"
+          onClick={sendCommand}
+        >
           Valider la commande
         </button>
       </div>

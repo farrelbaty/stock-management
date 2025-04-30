@@ -76,7 +76,7 @@ const OrdersPage = () => {
       <div className="flex justify-between mb-20">
         <h1 className="text-2xl font-bold">Commandes</h1>
         <Link
-          href="/commandes/neworder"
+          href="/centre-diagnostic/commandes/neworder"
           className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded cursor-pointer font-bold"
         >
           <Plus size={20} /> Nouvelle commande

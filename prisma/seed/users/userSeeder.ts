@@ -4,13 +4,22 @@ import { db } from "@/lib/db";
 
 async function main() {
   const user = {
-    name: "Farrel Baty",
-    email: "farrelbaty@gmail.com",
+    name: "Fournisseur 3",
+    email: "fournisseur3@gmail.com",
+    roleId: "cma3md0hk0001ugook2y721bq",
     password: "123456789",
   };
+
   const userRepo = new PrismaUserRepository();
   const createUserUseCase = new CreateUserUseCase(userRepo);
-  await createUserUseCase.save(user.name, user.email, user.password);
+  const userCreated = await createUserUseCase.save(
+    user.name,
+    user.email,
+    user.roleId,
+    user.password
+  );
+
+  console.log(userCreated);
 }
 
 main()
