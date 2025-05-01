@@ -6,6 +6,7 @@ export class CreateStockMovementUseCase {
 
   async save(movement: StockDTO) {
     const { productId, quantity, type, doneById, reason } = movement;
+
     return await this.stockRepo.createStockMovement(
       productId,
       quantity,
