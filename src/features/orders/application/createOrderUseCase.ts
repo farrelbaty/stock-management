@@ -1,13 +1,19 @@
-import { Order } from "../domain/entity/Order";
 import { IOrderRepository } from "../domain/repository/orderRepository";
 
 export class CreateOrderUseCase {
   constructor(private orderRepo: IOrderRepository) {}
 
-  async save(order: Omit<Order, "id">) {
-    // Je ferai une validation des données ici avant d'enregistrer la commande
-
-    const newOrder = await this.orderRepo.create(order);
+  async save(
+    items: { productId: string; quantityOrdered: number }[],
+    supplierId?: string,
+    serviceId?: string
+  ) {
+    if (!supplierId && !serviceId) throw new Error("L'identifiant est requis");
+    const newOrder = await this.orderRepo.createPurchaseOrder(
+      items,
+      supplierId,
+      serviceId
+    );
     return newOrder;
   }
 }

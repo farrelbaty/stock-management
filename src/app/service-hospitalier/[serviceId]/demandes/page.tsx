@@ -4,13 +4,14 @@ import { MesDemandesList } from "@/features/h-service/presentation/MesDemandesLi
 import { getServicesOrdersUseCase } from "@/lib/usecases/ordersUseCases";
 
 type Props = {
-  params: {
+  params: Promise<{
     serviceId: string;
-  };
+  }>;
 };
 
-export default async function HospitalDemandPage({ params }: Props) {
-  const { serviceId } = params; // ✅ PAS de `await` ici !
+export default async function HospitalDemandPage(props: Props) {
+  const params = await props.params;
+  const { serviceId } = params;
 
   const demands = await getServicesOrdersUseCase.execute(serviceId);
 

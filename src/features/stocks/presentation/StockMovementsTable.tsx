@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AddMovementModal } from "@/features/stocks/presentation/AddMovementModal";
+
 import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
@@ -34,6 +34,7 @@ export function StockMovementsTable<TData, TValue>({
   searchKey,
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const table = useReactTable({
@@ -136,12 +137,6 @@ export function StockMovementsTable<TData, TValue>({
           Suivant
         </Button>
       </div>
-
-      {/* Modale d'ajout */}
-      <AddMovementModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 }
