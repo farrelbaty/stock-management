@@ -27,20 +27,25 @@ export class PrismaOrderRepository implements IOrderRepository {
     try {
       return await db.purchaseOrder.count();
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
       throw error;
     }
   }
 
   async createPurchaseOrder(
-    supplierId: string,
-    items: { productId: string; quantityOrdered: number }[]
+    items: { productId: string; quantityOrdered: number }[],
+    supplierId?: string,
+    serviceId?: string
   ): Promise<Order> {
     try {
       const order = await db.purchaseOrder.create({
         data: {
-          supplierId,
+          ...(supplierId && { supplier: { connect: { id: supplierId } } }),
           status: OrderStatus.PENDING,
           orderDate: new Date(),
+          ...(serviceId && { service: { connect: { id: serviceId } } }),
           purchaseItems: {
             create: items.map((item) => ({
               product: { connect: { id: item.productId } },
@@ -74,11 +79,9 @@ export class PrismaOrderRepository implements IOrderRepository {
         include: { purchaseItems: true },
       });
 
-      if (!purchaseOrder) throw new Error("Commande introuvable");
-
       const updatedItems = await Promise.all(
         itemsReceived.map(async (item) => {
-          const existingItem = purchaseOrder.purchaseItems.find(
+          const existingItem = purchaseOrder?.purchaseItems.find(
             (pi) => pi.productId === item.productId
           );
           if (!existingItem)
@@ -112,7 +115,7 @@ export class PrismaOrderRepository implements IOrderRepository {
       );
 
       const isFullyReceived =
-        updatedItems.length === purchaseOrder.purchaseItems.length &&
+        updatedItems.length === purchaseOrder?.purchaseItems.length &&
         purchaseOrder.purchaseItems.every(
           (pi) =>
             pi.quantityOrdered ===
@@ -136,6 +139,9 @@ export class PrismaOrderRepository implements IOrderRepository {
 
       return this.toDomain(updatedOrder);
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
       throw error;
     }
   }
@@ -199,6 +205,9 @@ export class PrismaOrderRepository implements IOrderRepository {
 
       return this.toDomain(updatedOrder);
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
       throw error;
     }
   }
@@ -207,6 +216,9 @@ export class PrismaOrderRepository implements IOrderRepository {
     try {
       await db.purchaseOrder.delete({ where: { id: orderId } });
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
       throw error;
     }
   }
@@ -218,6 +230,9 @@ export class PrismaOrderRepository implements IOrderRepository {
       });
       return order ? this.toDomain(order) : null;
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
       throw error;
     }
   }
@@ -227,6 +242,24 @@ export class PrismaOrderRepository implements IOrderRepository {
       const orders = await db.purchaseOrder.findMany();
       return orders.map(this.toDomain);
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
+  async getServiceOrders(serviceId: string): Promise<Order[]> {
+    try {
+      const serviceOrders = await db.purchaseOrder.findMany({
+        where: { serviceId },
+      });
+      return serviceOrders.map(this.toDomain);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
+
       throw error;
     }
   }

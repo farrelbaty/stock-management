@@ -5,6 +5,7 @@ import { PrismaStockRepository } from "@/features/stocks/infrastructure/prismaSt
 import { CreateOrderUseCase } from "@/features/orders/application/createOrderUseCase";
 import { DeleteOrderUseCase } from "@/features/orders/application/deleteOrderUseCase";
 import { GetOrdersUseCase } from "@/features/orders/application/getOrdersUseCase";
+import { GetServicesOrders } from "@/features/orders/application/getServiceOrdersUseCase";
 import { ReceiveOrderUseCase } from "@/features/orders/application/receiveOrderUseCase";
 import { UpdateOrderUseCase } from "@/features/orders/application/updateOrderUseCase";
 
@@ -19,3 +20,4 @@ export const receiveOrderUseCase = new ReceiveOrderUseCase(orderRepo);
 export const updateOrderUseCase = new UpdateOrderUseCase(orderRepo);
 export const deleteOrderUseCase = new DeleteOrderUseCase(orderRepo);
 export const getOrdersUseCase = new GetOrdersUseCase(orderRepo);
+export const getServicesOrdersUseCase = new GetServicesOrders(orderRepo);

@@ -7,7 +7,11 @@ export interface IProductRepository {
     quantityAdded: number
   ): Promise<Product>;
   addProduct(product: Omit<Product, "id">): Promise<Product>;
-  getProduct(productId: string): Promise<Product | null>;
+  getProductById(productId: string): Promise<Product | null>;
   getAllProducts(): Promise<Product[]>;
   getProductByName(name: string): Promise<Product | null>;
+  deleteProductById(productId: string): Promise<void>;
+  updateMultipleProductQuantities(
+    updates: { productId: string; quantity: number }[]
+  ): Promise<Product[]>;
 }

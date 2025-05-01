@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ProductDTO } from "../domain/DTO/productDTO";
 import { Product } from "../domain/entity/Product";
 import { IProductRepository } from "../domain/repository/IProductRepository";
@@ -79,7 +80,7 @@ export class PrismaProductRepository implements IProductRepository {
     }
   }
 
-  async getProduct(productId: string) {
+  async getProductById(productId: string) {
     try {
       const product = await db.product.findUnique({ where: { id: productId } });
       return product ? this.toDomain(product) : null;
@@ -103,6 +104,41 @@ export class PrismaProductRepository implements IProductRepository {
 
       return product ? this.toDomain(product) : null;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteProductById(productId: string): Promise<void> {
+    try {
+      await db.product.delete({ where: { id: productId } });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+  async updateMultipleProductQuantities(
+    updates: { productId: string; quantity: number }[]
+  ): Promise<Product[]> {
+    try {
+      const transactions = updates.map(({ productId, quantity }) =>
+        db.product.update({
+          where: { id: productId },
+          data: {
+            quantityInStock: {
+              increment: quantity,
+            },
+          },
+        })
+      );
+
+      const updated = await db.$transaction(transactions);
+      return updated.map(this.toDomain);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
       throw error;
     }
   }

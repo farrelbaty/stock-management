@@ -6,6 +6,6 @@ export class GetProductUseCase {
   async execute(productId: string) {
     if (!productId) throw new Error("L'identifiant du produit est requis");
 
-    return await this.productRepo.getById(productId);
+    return await this.productRepo.getProductById(productId);
   }
 }
