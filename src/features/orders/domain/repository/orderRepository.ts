@@ -3,8 +3,9 @@ import { Order } from "../entity/Order";
 export interface IOrderRepository {
   totalOrder(): Promise<number>;
   createPurchaseOrder(
-    supplierId: string,
-    items: { productId: string; quantityOrdered: number }[]
+    items: { productId: string; quantityOrdered: number }[],
+    supplierId?: string,
+    serviceId?: string
   ): Promise<Order>;
 
   updateOrder(
@@ -25,4 +26,6 @@ export interface IOrderRepository {
     }[],
     doneById: string
   ): Promise<Order>;
+
+  getServiceOrders(serviceId: string): Promise<Order[]>;
 }

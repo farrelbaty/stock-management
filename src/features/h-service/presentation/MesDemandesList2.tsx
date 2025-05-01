@@ -1,9 +1,6 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
-// Données fictives représentant des demandes de produits
 const fakeDemandes = [
   {
     id: "DEM001",
@@ -35,7 +32,22 @@ const fakeDemandes = [
   },
 ];
 
-export const MesDemandesList = () => {
+type OrderDemands = {
+  id: string;
+  supplierId: string | null;
+  orderDate: Date;
+  status: "PENDING" | "PARTIALLY_RECEIVED" | "RECEIVED" | "CANCELLED";
+  deliveryDate: Date | null;
+  totalAmount: number | null;
+};
+
+type DemandProps = {
+  demands: OrderDemands[];
+  serviceId: string;
+};
+
+export const MesDemandesList = ({ demands, serviceId }: DemandProps) => {
+  console.log(demands, serviceId);
   return (
     <div className="grid md:grid-cols-3 gap-3">
       {fakeDemandes.map((demande) => (
