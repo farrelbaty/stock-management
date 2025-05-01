@@ -1,5 +1,3 @@
-// lib/usecases/orderUseCases.ts
-
 import { PrismaOrderRepository } from "@/features/orders/infrastructure/prismaOrderRepository";
 import { PrismaProductRepository } from "@/features/products/infrastructure/prismaProductRepository";
 import { PrismaStockRepository } from "@/features/stocks/infrastructure/prismaStockRepository";

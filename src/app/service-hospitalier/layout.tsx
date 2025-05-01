@@ -26,7 +26,7 @@ export default function HospitalLayout({
       id: "purchase",
       label: "Commandes",
       icon: <PackageCheck />,
-      href: "/service-hospitalier/commandes",
+      href: "/service-hospitalier/demandes",
     },
   ];
 

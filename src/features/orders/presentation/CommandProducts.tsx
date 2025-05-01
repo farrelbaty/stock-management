@@ -4,8 +4,9 @@
 import { Product } from "@/features/products/domain/entity/Product";
 import { Label } from "@radix-ui/react-label";
 import { useQuery } from "@tanstack/react-query";
-import { Trash2 } from "lucide-react"; // icône de poubelle (facultatif)
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type LigneCommande = {
   produitId: string | null;
@@ -77,12 +78,12 @@ export default function CommandProducts() {
       if (!res.ok) throw new Error("Erreur lors de l'envoi de la commande");
 
       const data = await res.json();
-      alert("Commande envoyée avec succès !");
-      console.log(data);
+      toast("Commande envoyée avec succès !");
+      return data;
       setLignes([{ produitId: null, quantityOrdered: 1 }]);
     } catch (err) {
       console.error(err);
-      alert("Échec de l'envoi de la commande.");
+      toast("Échec de l'envoi de la commande.");
     }
   };
 
