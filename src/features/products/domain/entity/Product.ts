@@ -10,5 +10,6 @@ export class Product {
     public minQuantity: number,
     public expiryDate: Date | null = null,
     public description: string | null = null
-  ) {}
+  ) // public supplierId: string | null
+  {}
 }

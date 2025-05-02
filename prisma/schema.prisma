@@ -15,18 +15,25 @@ model Product {
   referenceCode   String      @unique
   quantityInStock Int         @default(0)
   minQuantity     Int         @default(0)
+  price String?
   expiryDate      DateTime?
+  supplierId String?
+  serviceId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   stockMovements StockMovement[]
   purchaseItems  PurchaseItem[]
+
+  supplier User? @relation(fields:[supplierId],references: [id])
+  service Service? @relation(fields:[serviceId],references: [id])
 }
 
 model Service {
   id        String          @id @default(cuid())
   name      String          @unique
+  products Product[]
   personnel User[]
   orders    PurchaseOrder[]
 }
@@ -60,6 +67,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   stockMovements StockMovement[]
+  products Product[]
 
   purchaseOrders PurchaseOrder[]
   role           Role            @relation(fields: [roleId], references: [id])
