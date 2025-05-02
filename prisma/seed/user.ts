@@ -27,16 +27,22 @@ async function seedUsers() {
   // Définition des utilisateurs à créer
   const users = [
     {
-      name: "YEKINI CARINE",
-      email: "dryekinicarine@gmail.com",
+      name: "Erwin GAD inc",
+      email: "Erwin@gmail.com",
       password: "111111111",
-      role: "MEDECIN",
+      role: "FOURNISSEUR",
     },
     {
-      name: "Angelle",
-      email: "angelle@gmail.com",
+      name: "Biopharma",
+      email: "biopharma@gmail.com",
       password: "111111111",
-      role: "GESTIONNAIRE",
+      role: "FOURNISSEUR",
+    },
+    {
+      name: "Pharma Y",
+      email: "pharmay@gmail.com",
+      password: "111111111",
+      role: "FOURNISSEUR",
     },
   ];
 

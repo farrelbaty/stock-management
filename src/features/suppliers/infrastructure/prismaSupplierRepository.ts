@@ -19,24 +19,35 @@ export class PrismaSupplier implements ISupplierRepository {
   }
   async getAllSuppliers(): Promise<User[]> {
     try {
-      const suppliers = await db.user.findMany({
-        where: {
-          role: {
-            name: "fournisseur",
-          },
-        },
+      const fournisseurRole = await db.role.findFirst({
+        where: { name: "FOURNISSEUR" },
+      });
+
+      console.log("Role", fournisseurRole);
+      if (!fournisseurRole) throw new Error("Rôle FOURNISSEUR introuvable");
+
+      console.log("fournisseurRole.id:", fournisseurRole.id);
+
+      const allUsers = await db.user.findMany({
+        where: { roleId: fournisseurRole.id },
         select: {
           id: true,
           name: true,
           email: true,
           password: true,
-          role: true,
-          phoneNumber: true,
-          address: true,
+          // roleId: true,
+          // address: true,
+          // phoneNumber: true,
+          role: {
+            select: {
+              name: true,
+            },
+          },
         },
       });
+      console.log("Tous les utilisateurs avec rôles:", allUsers);
 
-      return suppliers.map(this.toDomain);
+      return allUsers.map(this.toDomain);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError)
         throw new Error(error.message);

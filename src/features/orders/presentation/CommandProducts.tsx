@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Product } from "@/features/products/domain/entity/Product";
 import { getAllSuppliers } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
 import { useQuery } from "@tanstack/react-query";
@@ -9,10 +8,24 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+type ProductSupplier = {
+  id: string;
+  name: string;
+  type: string;
+  referenceCode: string;
+  quantityInStock: number;
+  minQuantity: number;
+  expiryDate: Date | null;
+  description: string | null;
+  produitFournisseur: {
+    prix: number;
+  }[];
+};
+
 type Fournisseur = {
   id: string;
   name: string;
-  produits: Product[];
+  produits: ProductSupplier[];
 };
 
 type LigneCommande = {
@@ -39,12 +52,9 @@ export default function CommandProducts() {
   );
   const produitsDuFournisseur = selectedFournisseur?.produits ?? [];
 
-  const getPrixProduitChezFournisseur = (produitId: string) => {
+  const getPrixProduitChezFournisseur = (produitId: string): number => {
     const produit = produitsDuFournisseur.find((p) => p.id === produitId);
-    const fournisseurInfo = produit?.fournisseurs?.find(
-      (f) => f.id === selectedFournisseurId
-    );
-    return fournisseurInfo?.prix ?? 0;
+    return produit?.produitFournisseur?.[0]?.prix ?? 0;
   };
 
   const handleChange = (
@@ -120,7 +130,6 @@ export default function CommandProducts() {
   };
 
   return (
-    // UI inchangée
     <div className="p-6 space-y-6 bg-gray-50 rounded-lg shadow-lg max-w-3xl mx-auto">
       <h2 className="text-2xl font-semibold text-center">Nouvelle commande</h2>
 

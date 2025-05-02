@@ -6,8 +6,8 @@ import { IProductRepository } from "../domain/repository/IProductRepository";
 
 export class PrismaProductRepository implements IProductRepository {
   public toDomain(
-    raw: Product & { supplierId: string | null }
-  ): Product & { supplierId: string | null } {
+    raw: Product & { supplier: { id: string; name: string } | null }
+  ): Product & { supplier: { id: string; name: string } | null } {
     return {
       id: raw.id,
       name: raw.name,
@@ -17,7 +17,7 @@ export class PrismaProductRepository implements IProductRepository {
       minQuantity: raw.minQuantity,
       expiryDate: raw.expiryDate,
       description: raw.description,
-      supplierId: raw.supplierId,
+      supplier: raw.supplier,
     };
   }
 
@@ -33,6 +33,14 @@ export class PrismaProductRepository implements IProductRepository {
     try {
       const updated = await db.product.update({
         where: { id: productId },
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
         data: {
           quantityInStock: {
             increment: quantityAdded,
@@ -79,6 +87,14 @@ export class PrismaProductRepository implements IProductRepository {
           description: description ? description : null,
           ...(supplierId && { supplier: { connect: { id: supplierId } } }),
         },
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       });
 
       return this.toDomain(newProduct);
@@ -89,7 +105,17 @@ export class PrismaProductRepository implements IProductRepository {
 
   async getProductById(productId: string) {
     try {
-      const product = await db.product.findUnique({ where: { id: productId } });
+      const product = await db.product.findUnique({
+        where: { id: productId },
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
       return product ? this.toDomain(product) : null;
     } catch (error) {
       throw error;
@@ -100,6 +126,14 @@ export class PrismaProductRepository implements IProductRepository {
     try {
       const productsByService = await db.product.findMany({
         where: { serviceId },
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       });
 
       return productsByService.map(this.toDomain);
@@ -110,7 +144,16 @@ export class PrismaProductRepository implements IProductRepository {
 
   async getAllProducts() {
     try {
-      const products = await db.product.findMany();
+      const products = await db.product.findMany({
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
       return products.map(this.toDomain);
     } catch (error) {
       throw error;
@@ -119,7 +162,17 @@ export class PrismaProductRepository implements IProductRepository {
 
   async getProductByName(name: string): Promise<Product | null> {
     try {
-      const product = await db.product.findFirst({ where: { name } });
+      const product = await db.product.findFirst({
+        where: { name },
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
 
       return product ? this.toDomain(product) : null;
     } catch (error) {
@@ -144,6 +197,14 @@ export class PrismaProductRepository implements IProductRepository {
       const transactions = updates.map(({ productId, quantity }) =>
         db.product.update({
           where: { id: productId },
+          include: {
+            supplier: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
           data: {
             quantityInStock: {
               increment: quantity,
@@ -167,7 +228,7 @@ export class PrismaProductRepository implements IProductRepository {
       const orders = await db.purchaseOrder.findMany({
         where: {
           status: {
-            in: ["RECEIVED", "PARTIALLY_RECEIVED"], // on filtre les commandes réellement livrées
+            in: ["RECEIVED", "PARTIALLY_RECEIVED"],
           },
         },
         include: {
@@ -226,6 +287,14 @@ export class PrismaProductRepository implements IProductRepository {
     try {
       const productsBySupplier = await db.product.findMany({
         where: { supplierId },
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       });
 
       return productsBySupplier.map(this.toDomain);
