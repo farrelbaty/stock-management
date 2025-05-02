@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
+import { auth } from "../app/auth";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -13,7 +13,9 @@ export type OrderStatus =
   | "PENDING"
   | "PARTIALLY_RECEIVED"
   | "RECEIVED"
-  | "CANCELLED";
+  | "CANCELLED"
+  | "WAITED_FOR_DELIVERY"
+  | "DELIVERED";
 
 export type UserRole = "ADMIN" | "GESTIONNAIRE" | "UTILISATEUR";
 
@@ -44,3 +46,29 @@ export async function getAllProducts() {
     throw error;
   }
 }
+export async function getSupplier(supplierId: string) {
+  try {
+    const response = await fetch(`/api/suppliers/${supplierId}`);
+    if (!response.ok) throw new Error("Erreur serveur");
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+export async function getAllSuppliers() {
+  try {
+    const response = await fetch(`/api/suppliers`);
+    if (!response.ok) throw new Error("Erreur serveur");
+
+    const data = await response.json();
+
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getSession = async () => await auth();

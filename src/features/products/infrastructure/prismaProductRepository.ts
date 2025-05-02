@@ -5,7 +5,9 @@ import { Product } from "../domain/entity/Product";
 import { IProductRepository } from "../domain/repository/IProductRepository";
 
 export class PrismaProductRepository implements IProductRepository {
-  public toDomain(raw: Product): Product {
+  public toDomain(
+    raw: Product & { supplierId: string | null }
+  ): Product & { supplierId: string | null } {
     return {
       id: raw.id,
       name: raw.name,
@@ -15,6 +17,7 @@ export class PrismaProductRepository implements IProductRepository {
       minQuantity: raw.minQuantity,
       expiryDate: raw.expiryDate,
       description: raw.description,
+      supplierId: raw.supplierId,
     };
   }
 
@@ -43,7 +46,9 @@ export class PrismaProductRepository implements IProductRepository {
     }
   }
 
-  async addProduct(product: ProductDTO): Promise<Product> {
+  async addProduct(
+    product: ProductDTO & { supplierId?: string }
+  ): Promise<Product> {
     const {
       name,
       type,
@@ -52,6 +57,7 @@ export class PrismaProductRepository implements IProductRepository {
       quantityInStock,
       expiryDate,
       description,
+      supplierId,
     } = product;
 
     try {
@@ -71,6 +77,7 @@ export class PrismaProductRepository implements IProductRepository {
           quantityInStock: quantityInStock ? quantityInStock : 0,
           expiryDate: expiryDate ? new Date(expiryDate) : null,
           description: description ? description : null,
+          ...(supplierId && { supplier: { connect: { id: supplierId } } }),
         },
       });
 
@@ -84,6 +91,18 @@ export class PrismaProductRepository implements IProductRepository {
     try {
       const product = await db.product.findUnique({ where: { id: productId } });
       return product ? this.toDomain(product) : null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllProductsByService(serviceId: string): Promise<Product[]> {
+    try {
+      const productsByService = await db.product.findMany({
+        where: { serviceId },
+      });
+
+      return productsByService.map(this.toDomain);
     } catch (error) {
       throw error;
     }
@@ -139,6 +158,78 @@ export class PrismaProductRepository implements IProductRepository {
       if (error instanceof PrismaClientKnownRequestError) {
         throw new Error(error.message);
       }
+      throw error;
+    }
+  }
+
+  async getProductsPurchasedByStructure() {
+    try {
+      const orders = await db.purchaseOrder.findMany({
+        where: {
+          status: {
+            in: ["RECEIVED", "PARTIALLY_RECEIVED"], // on filtre les commandes réellement livrées
+          },
+        },
+        include: {
+          purchaseItems: {
+            include: {
+              product: {
+                include: {
+                  supplier: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const productMap = new Map<
+        string,
+        {
+          product: Product;
+          totalQuantity: number;
+          totalSpent: number;
+          supplierName?: string;
+        }
+      >();
+
+      for (const order of orders) {
+        for (const item of order.purchaseItems) {
+          const productId = item.productId;
+          const existing = productMap.get(productId);
+
+          const quantity = item.quantityOrdered;
+          const price = item.unitPrice ?? 0;
+          const amount = quantity * price;
+
+          if (existing) {
+            existing.totalQuantity += quantity;
+            existing.totalSpent += amount;
+          } else {
+            productMap.set(productId, {
+              product: this.toDomain(item.product),
+              totalQuantity: quantity,
+              totalSpent: amount,
+              supplierName: item.product.supplier?.name || "Inconnu",
+            });
+          }
+        }
+      }
+
+      return Array.from(productMap.values());
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllProductsBySupplier(supplierId: string): Promise<Product[]> {
+    try {
+      const productsBySupplier = await db.product.findMany({
+        where: { supplierId },
+      });
+
+      return productsBySupplier.map(this.toDomain);
+    } catch (error) {
       throw error;
     }
   }

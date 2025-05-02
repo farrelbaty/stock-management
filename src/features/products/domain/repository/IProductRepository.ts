@@ -8,11 +8,17 @@ export interface IProductRepository {
     quantityAdded: number
   ): Promise<Product>;
 
-  addProduct(product: Omit<Product, "id">): Promise<Product>;
+  addProduct(
+    product: Omit<Product, "id">,
+    supplierId?: string
+  ): Promise<Product>;
 
   getProductById(productId: string): Promise<Product | null>;
 
   getAllProducts(): Promise<Product[]>;
+
+  getAllProductsByService(serviceId: string): Promise<Product[]>;
+  getAllProductsBySupplier(supplierId: string): Promise<Product[]>;
 
   getProductByName(name: string): Promise<Product | null>;
 
@@ -21,4 +27,13 @@ export interface IProductRepository {
   updateMultipleProductQuantities(
     updates: { productId: string; quantity: number }[]
   ): Promise<Product[]>;
+
+  getProductsPurchasedByStructure(): Promise<
+    {
+      product: Product;
+      totalQuantity: number;
+      totalSpent: number;
+      supplierName?: string;
+    }[]
+  >;
 }

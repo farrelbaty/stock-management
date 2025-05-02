@@ -15,7 +15,7 @@ export class PrismaOrderRepository implements IOrderRepository {
   public toDomain(raw: Order): Order {
     return {
       id: raw.id,
-      supplierId: raw.supplierId,
+      userId: raw.userId,
       orderDate: raw.orderDate,
       deliveryDate: raw.deliveryDate,
       status: raw.status,

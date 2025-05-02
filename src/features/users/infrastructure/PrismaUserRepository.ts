@@ -45,13 +45,7 @@ export class PrismaUserRepository implements IUserRepository {
 
       if (!passwordMatch) throw new Error("Email et/ou mot de passe invalide");
 
-      const userWithoutPassword = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      };
-      return userWithoutPassword;
+      return this.toDomain(user);
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -66,7 +60,7 @@ export class PrismaUserRepository implements IUserRepository {
     try {
       const userExists = await db.user.findUnique({ where: { email } });
       if (userExists)
-        throw new Error("Un utilisateur avec cet email existe déjà");
+        throw new Error(`Un utilisateur avec cet email ${email} existe déjà`);
 
       const hashedPassword = await bcrypt.hash(password, 10);
       await db.user.create({
