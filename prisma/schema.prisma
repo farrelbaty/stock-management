@@ -45,22 +45,30 @@ model StockMovement {
   doneBy  User?   @relation(fields: [doneById], references: [id])
 }
 
-model Supplier {
-  id          String  @id @default(cuid())
-  name        String  @unique
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
   address     String?
   phoneNumber String?
-  email       String?
+  roleId    String
+  serviceId String?
 
-  createdAt DateTime @default(now()) 
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  stockMovements StockMovement[]
+
   purchaseOrders PurchaseOrder[]
+  role           Role            @relation(fields: [roleId], references: [id])
+  service        Service?        @relation(fields: [serviceId], references: [id])
 }
 
 model PurchaseOrder {
   id           String      @id @default(cuid())
-  supplierId   String?
+  userId   String?
   orderDate    DateTime    @default(now())
   deliveryDate DateTime?
   status       OrderStatus @default(PENDING)
@@ -72,7 +80,7 @@ model PurchaseOrder {
   updatedAt DateTime @updatedAt
 
   service       Service?       @relation(fields: [serviceId], references: [id])
-  supplier      Supplier?      @relation(fields: [supplierId], references: [id])
+  user      User?      @relation(fields: [userId], references: [id])
   purchaseItems PurchaseItem[]
 }
 
@@ -88,20 +96,7 @@ model PurchaseItem {
   product       Product       @relation(fields: [productId], references: [id])
 }
 
-model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  roleId    String
-  serviceId String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  stockMovements StockMovement[]
-  role           Role            @relation(fields: [roleId], references: [id])
-  service        Service?        @relation(fields: [serviceId], references: [id])
-}
 
 model Role {
   id    String @id @default(cuid())
