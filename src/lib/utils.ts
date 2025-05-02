@@ -31,3 +31,16 @@ export function generateReferenceCode(): string {
 
   return `${prefix}-${year}-${randomPart}`;
 }
+
+export async function getAllProducts() {
+  try {
+    const response = await fetch("/api/products");
+    if (!response.ok) throw new Error("Erreur serveur");
+
+    const data = await response.json();
+
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    throw error;
+  }
+}

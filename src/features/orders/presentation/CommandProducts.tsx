@@ -2,6 +2,7 @@
 "use client";
 
 import { Product } from "@/features/products/domain/entity/Product";
+import { getAllProducts } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
 import { useQuery } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
@@ -12,17 +13,6 @@ type LigneCommande = {
   produitId: string | null;
   quantityOrdered: number;
 };
-
-async function getAllProducts() {
-  try {
-    const response = await fetch("/api/products");
-    if (!response.ok) throw new Error("Erreur serveur");
-
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-}
 
 export default function CommandProducts() {
   const [lignes, setLignes] = useState<LigneCommande[]>([
@@ -51,7 +41,7 @@ export default function CommandProducts() {
     setLignes(newLignes);
   };
 
-  const { data } = useQuery<Product[]>({
+  const { data, isLoading } = useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: getAllProducts,
   });
@@ -104,6 +94,7 @@ export default function CommandProducts() {
               onChange={(e) => handleChange(index, "produitId", e.target.value)}
             >
               <option value="">-- Sélectionner un produit --</option>
+              {isLoading && <p>chargement...</p>}
               {data?.map((p) => (
                 <option key={p.id} value={p.id as string}>
                   {p.name}

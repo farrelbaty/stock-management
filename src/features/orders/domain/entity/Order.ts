@@ -6,7 +6,6 @@ export class Order {
     public supplierId: string | null,
     public orderDate: Date,
     public status: OrderStatus,
-    public deliveryDate: Date | null,
-    public totalAmount: number | null
+    public deliveryDate: Date | null
   ) {}
 }

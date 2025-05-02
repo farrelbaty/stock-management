@@ -4,64 +4,12 @@
 import GenericForm from "@/components/shared/GenericForm";
 import ModalComponent from "@/components/shared/ModalComponent";
 import { Button } from "@/components/ui/button";
+import queryClient from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
-type CommandFieldsType = {
-  name: string;
-  label: string;
-  typeChamps: "text" | "number" | "textarea" | "date" | "select";
-  options?: { value: string; label: string }[];
-  required: boolean;
-};
-
-const commandFields: CommandFieldsType[] = [
-  { name: "name", label: "Nom", typeChamps: "text", required: true },
-  {
-    name: "type",
-    label: "Type de produit",
-    typeChamps: "select",
-    options: [
-      {
-        label: "Consommable",
-        value: "CONSOMMABLE",
-      },
-      {
-        label: "Matériel",
-        value: "MATERIEL",
-      },
-      {
-        label: "Médicament",
-        value: "MEDICAMENT",
-      },
-      {
-        label: "Autre",
-        value: "AUTRE",
-      },
-    ],
-    required: false,
-  },
-  {
-    name: "quantityInStock",
-    label: "Quantité en stock",
-    typeChamps: "number",
-    required: true,
-  },
-  {
-    name: "minQuantity",
-    label: "Seuil d'alerte",
-    typeChamps: "number",
-    required: true,
-  },
-  {
-    name: "expiryDate",
-    label: "Date de péremption",
-    typeChamps: "date",
-    required: false,
-  },
-];
+import { productFormFields } from "./productFormFields";
 
 const AddProductModal = () => {
   const [open, setOpen] = useState(false);
@@ -85,12 +33,12 @@ const AddProductModal = () => {
   const mutation = useMutation({
     mutationFn: addProduct,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       toast("Produit ajouté avec succès !");
       setOpen(false);
     },
     onError: (error) => {
-      toast("Erreur lors de l'ajout du produit");
-      console.error(error);
+      toast(error.message);
     },
   });
 
@@ -112,7 +60,7 @@ const AddProductModal = () => {
         title="Ajouter un produit"
       >
         <GenericForm
-          fields={commandFields}
+          fields={productFormFields}
           onSubmit={handleSubmit}
           onSuccess={() => setOpen(false)}
         />

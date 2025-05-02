@@ -19,7 +19,6 @@ export class PrismaOrderRepository implements IOrderRepository {
       orderDate: raw.orderDate,
       deliveryDate: raw.deliveryDate,
       status: raw.status,
-      totalAmount: raw.totalAmount ?? null,
     };
   }
 
